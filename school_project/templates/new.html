@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <!-- Add Bootstrap CSS link here if not already included -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        /* Add your custom styles here */
+        body {
+            background-color: #f8f9fa;
+        }
+
+        #MyForm {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 300px;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .my_button{
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px;">
+        <h2>Welcome to the Dashboard!</h2>
+        <button id="showFormBtn" class="btn btn-primary">Show Form</button>
+
+        <form method="POST" action="{% url 'new' %}" id="MyForm" style="display: none;">
+            {% csrf_token %}
+            <!-- Your form fields go here -->
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="dob">DOB:</label>
+            <input type="date" id="dob" name="dob" required>
+
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="" disabled selected>Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="transgender">Transgender</option>
+                <option value="other">Other</option>
+            </select>
+
+            <label for="phone_number">Phone Number:</label>
+            <input type="tel" id="phone_number" name="phone_number" required>
+
+            <label for="mail_id">Mail ID:</label>
+            <input type="email" id="mail_id" name="mail_id" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="5" cols="40" required></textarea>
+
+            <label for="department">Department:</label>
+            <select id="department" name="department" onchange="updateCourses(this)" required>
+                <!-- Add department options here -->
+                <option value="" disabled selected>Select a department</option>
+                <option value="computer_science">Computer Science</option>
+                <option value="biology_science">Biology Science</option>
+                <option value="commerce">Commerce</option>
+                <option value="humanities">Humanities</option>
+                <option value="environmental_science">Environmental Science</option>
+                <option value="psychology">Psychology</option>
+                <!-- Add other department options... -->
+            </select>
+
+            <label for="courses">Courses:</label>
+            <select id="courses" name="courses" required>
+                <!-- Courses will be populated dynamically based on the selected department -->
+                <!-- Initial placeholder option -->
+                <option value="" disabled selected>Select a department first</option>
+            </select>
+
+            <!-- Add other form fields... -->
+            <!-- New requirements -->
+            <label for="purpose">Purpose:</label>
+            <select id="purpose" name="purpose" required>
+                <option value="" disabled selected>Select</option>
+                <option value="enquiry">For Enquiry</option>
+                <option value="order">Place Order</option>
+                <option value="return">Return</option>
+                <!-- Add other purpose options... -->
+            </select>
+            <!-- Checkbox for materials provide -->
+            <label>Materials Provide:</label>
+            <div class="checkbox">
+                <label class="checkbox-label" for="debit_notebook">Note Book</label>
+                <input type="checkbox" id="debit_notebook" name="materials" value="debit_notebook">
+                <label class="checkbox-label" for="pen">Pen</label>
+                <input type="checkbox" id="pen" name="materials" value="pen">
+                <label class="checkbox-label" for="question_papers">Question Papers</label>
+                <input type="checkbox" id="question_papers" name="materials" value="question_papers">
+            </div>
+
+            <button type="submit" class="btn btn-success">Submit</button>
+        </form>
+
+        <div class="container">
+            <a href="{% url 'logout' %}" class="btn btn-danger my_button">Logout</a>
+        </div>
+    </div>
+    <script>
+        // JavaScript to toggle form visibility
+        document.getElementById('showFormBtn').addEventListener('click', function() {
+            var form = document.getElementById('MyForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+
+        });
+
+        function showSuccessMessage() {
+            var form = document.getElementById('MyForm');
+            var successMessage = document.getElementById('successMessage');
+
+            // Assuming a successful form submission
+            form.style.display = 'none';
+            successMessage.style.display = 'block';
+        }
+
+        function returnHome() {
+            // Add logic to navigate back to the home page or perform other actions
+            window.location.href = '{% url 'home' %}';
+        }
+
+        // Update the form submission to call the showSuccessMessage function
+        document.getElementById('MyForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            showSuccessMessage();
+        });
+
+        function updateCourses(departmentSelect) {
+            var coursesSelect = document.getElementById('courses');
+            var selectedDepartment = departmentSelect.value;
+
+            // Clear existing options
+            coursesSelect.innerHTML = '';
+
+            // Add courses based on the selected department
+            if (selectedDepartment === 'computer_science') {
+                addOption(coursesSelect, 'Select a course', ''); // Initial placeholder
+                addOption(coursesSelect, 'B.Tech', 'btech');
+                addOption(coursesSelect, 'M.Tech', 'mtech');
+                addOption(coursesSelect, 'Bsc', 'bsc');
+                // Add other computer science courses...
+            } else if (selectedDepartment === 'biology_science') {
+                addOption(coursesSelect, 'Select a course', ''); // Initial placeholder
+                addOption(coursesSelect, 'Biology Course 1', 'bio_course1');
+                addOption(coursesSelect, 'Biology Course 2', 'bio_course2');
+                // Add other biology science courses...
+            } else if (selectedDepartment === 'commerce') {
+                addOption(coursesSelect, 'Select a course', ''); // Initial placeholder
+                addOption(coursesSelect, 'B.Com', 'bcom');
+                addOption(coursesSelect, 'M.Com', 'mcom');
+                // Add other commerce courses...
+            } else if (selectedDepartment === 'humanities') {
+                addOption(coursesSelect, 'Select a course', ''); // Initial placeholder
+                addOption(coursesSelect, 'BA', 'ba');
+                addOption(coursesSelect, 'MA', 'ma');
+                // Add other humanities courses...
+            } else if (selectedDepartment === 'environmental_science') {
+                addOption(coursesSelect, 'Select a course', ''); // Initial placeholder
+                addOption(coursesSelect, 'Environmental Science Course 1', 'env_course1');
+                addOption(coursesSelect, 'Environmental Science Course 2', 'env_course2');
+                // Add other environmental science courses...
+            } else if (selectedDepartment === 'psychology') {
+                addOption(coursesSelect, 'Select a course', ''); // Initial placeholder
+                addOption(coursesSelect, 'Psychology Course 1', 'psy_course1');
+                addOption(coursesSelect, 'Psychology Course 2', 'psy_course2');
+                // Add other psychology courses...
+            }
+            // Add other department cases...
+        }
+
+        function addOption(selectElement, text, value) {
+            var option = document.createElement('option');
+            option.text = text;
+            option.value = value;
+            selectElement.add(option);
+        }
+
+    </script>
+    <div id="successMessage" style="display: none; text-align: center; margin-top: 20px;">
+        <p>Form submitted successfully!</p>
+        <p id="returnHome" class="btn btn-link" onclick="returnHome()">Return Home</p>
+    </div>
+</body>
+</html>
